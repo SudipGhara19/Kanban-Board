@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TbCirclePlusFilled } from 'react-icons/tb';
 import AddTaskModal from '../components/AddTaskModal';
 import { FaCodePullRequest } from 'react-icons/fa6';
-import { RiProgress3Line } from 'react-icons/ri';
+import { RiErrorWarningLine, RiProgress3Line } from 'react-icons/ri';
 import { IoCheckmarkDoneCircle } from 'react-icons/io5';
 import { MdDeleteSweep, MdModeEdit } from 'react-icons/md';
 import EditModal from '../components/EditModal';
@@ -16,7 +16,10 @@ function KanbanBoard() {
     });
     const [isAdding, setIsAdding] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [deleteModalVisible, setDeletedVisible] = useState(false);
     const [editingTask, setEditingTask] = useState({ category: "", index: null, content: "" });
+    const [taskToDelete, setTaskToDelete] = useState(null);
+
 
     // Load tasks from localStorage when the component mounts
     useEffect(() => {
@@ -47,6 +50,14 @@ function KanbanBoard() {
             return updatedTasks;
         });
         setEditModalVisible(false); // Close the modal
+    };
+
+
+    const handleDeleteTask = ({ task, category, index }) => {
+        const updatedTasks = { ...tasks };
+        updatedTasks[category].splice(index, 1);
+        setTasks(updatedTasks);
+        setDeletedVisible(false);
     };
 
 
@@ -134,6 +145,10 @@ function KanbanBoard() {
                                             <p className="leading-5 select-none">{t}</p>
                                         </div>
                                         <MdDeleteSweep
+                                            onClick={() => {
+                                                setTaskToDelete({ task: t, category: 'done', index: i });
+                                                setDeletedVisible(true);
+                                            }}
                                             className="absolute right-2 text-red-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 transition-all duration-500 ease-in-out cursor-pointer"
                                             size={20}
                                         />
@@ -154,6 +169,34 @@ function KanbanBoard() {
                 />
             )}
 
+            {deleteModalVisible && (
+                <div className="fixed inset-0 text-zinc-900 bg-white bg-opacity-70 flex items-center justify-center z-50">
+                    <div className="bg-white w-[90%] md:w-[40%] p-6 rounded-lg shadow-lg relative flex flex-col items-center">
+                        <button
+                            className="absolute top-1 right-3 text-gray-600 hover:text-gray-900 text-2xl font-bold"
+                            onClick={() => setDeletedVisible(false)}
+                        >
+                            &times;
+                        </button>
+                        <RiErrorWarningLine className="inline-block text-gray-400" size={50} />
+                        <h1 className='font-semibold text-center text-zinc-800 text-2xl my-4'>Task already <span className='font-bold'>done</span>. <br />
+                            Want to delete this task?
+                        </h1>
+                        <div className='flex justify-center gap-6'>
+                            <button
+                                onClick={() => handleDeleteTask(taskToDelete)}
+                                className='bg-red-500 px-5 py-2 my-4 font-semibold text-zinc-100 hover:text-white hover:bg-red-700 hover:scale-105 transition-all ease-in-out duration-300 rounded' >
+                                Yes, delete
+                            </button>
+                            <button
+                                onClick={() => setDeletedVisible(false)}
+                                className='bg-gray-400 px-5 py-2 my-4 font-semibold text-zinc-800 hover:text-zinc-100 hover:bg-gray-700 hover:scale-105 transition-all ease-in-out duration-300 rounded' >
+                                No, cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
