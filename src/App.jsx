@@ -6,9 +6,10 @@ function App() {
   return (
     <Router>
 
-      <div className='h-screen w-screen text-zinc-100 bg-zinc-900'>
+      <div className='min-h-screen w-screen text-zinc-100 bg-zinc-900'>
         <Routes>
           <Route path="/" element={<WelcomePage />} />
+          <Route path="/kanban-board" element={<WelcomePage />} />
         </Routes>
       </div>
 
