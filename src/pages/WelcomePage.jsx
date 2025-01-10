@@ -57,7 +57,7 @@ function WelcomePage() {
             {/* INFO */}
             <div className='py-10'>
                 <h1 className='gsap-ani text-center text-5xl'><span className='font-medium text-sky-500'>Hi</span>, I'm <span className='font-semibold'>SUDIP GHARA</span></h1>
-                <p className='text-xl text-center text-zinc-300 mb-3 gsap-ani'>MERN Stack Developer</p>
+                <p className='text-xl text-center text-zinc-400 mb-3 gsap-ani'>MERN Stack Developer</p>
                 <div className='mx-auto w-[30%] my-3 flex justify-between gsap-ani'>
                     {links.map((l, i) =>
                         <div className='flex items-center gap-3'>
