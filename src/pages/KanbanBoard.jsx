@@ -5,15 +5,18 @@ import { FaCodePullRequest } from 'react-icons/fa6';
 import { RiProgress3Line } from 'react-icons/ri';
 import { IoCheckmarkDoneCircle } from 'react-icons/io5';
 import { MdDeleteSweep, MdModeEdit } from 'react-icons/md';
+import EditModal from '../components/EditModal';
 
 function KanbanBoard() {
 
     const [tasks, setTasks] = useState({
-        requested: [],
+        requested: ["heelooo", "my name is sudip"],
         inProgress: ["hello"],
         done: ["hello"],
     });
     const [isAdding, setIsAdding] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editingTask, setEditingTask] = useState({ category: "", index: null, content: "" });
 
     // Load tasks from localStorage when the component mounts
     useEffect(() => {
@@ -32,6 +35,20 @@ function KanbanBoard() {
 
 
 
+    const handleEditClick = (category, index, content) => {
+        setEditingTask({ category, index, content });
+        setEditModalVisible(true);
+    };
+
+    const updateTask = (updatedContent) => {
+        setTasks((prevTasks) => {
+            const updatedTasks = { ...prevTasks };
+            updatedTasks[editingTask.category][editingTask.index] = updatedContent;
+            return updatedTasks;
+        });
+        setEditModalVisible(false); // Close the modal
+    };
+
 
     return (
         <>
@@ -42,6 +59,8 @@ function KanbanBoard() {
                     </h1>
 
                     <div className="w-full h-full mx-10 flex justify-evenly">
+
+                        {/* ---------------------------------- REQUESTED Section -------------------------------- */}
                         <div className="w-[25%] h-[70vh] bg-slate-300 my-4 rounded-md overflow-y-auto scroll-bar">
                             <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#4cb5ff] to-[#0248d5] relative sticky top-0 z-10">
                                 Requested
@@ -62,6 +81,7 @@ function KanbanBoard() {
                                             <p className="leading-5 select-none">{t}</p>
                                         </div>
                                         <MdModeEdit
+                                            onClick={() => handleEditClick("requested", i, t)}
                                             className="absolute right-2 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 transition-all duration-500 ease-in-out cursor-pointer"
                                             size={20}
                                         />
@@ -71,7 +91,7 @@ function KanbanBoard() {
                         </div>
 
 
-
+                        {/* ---------------------------------- IN-PROGRESS Section -------------------------------- */}
                         <div className="w-[25%] h-[70vh] bg-slate-300 my-4 rounded-md overflow-y-auto scroll-bar">
                             <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#ede155] to-[#f39f18] relative sticky top-0 z-10">
                                 In progress
@@ -88,6 +108,7 @@ function KanbanBoard() {
                                             <p className="leading-5 select-none">{t}</p>
                                         </div>
                                         <MdModeEdit
+                                            onClick={() => handleEditClick("inProgress", i, t)}
                                             className="absolute right-2 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 transition-all duration-500 ease-in-out cursor-pointer"
                                             size={20}
                                         />
@@ -96,7 +117,7 @@ function KanbanBoard() {
                             )}
                         </div>
 
-
+                        {/* ---------------------------------- DONE Section -------------------------------- */}
                         <div className="w-[25%] h-[70vh] bg-slate-300 my-4 rounded-md overflow-y-auto scroll-bar">
                             <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#6af283] to-[#03981f] relative sticky top-0 z-10">
                                 done
@@ -125,6 +146,14 @@ function KanbanBoard() {
             </div>
 
             {isAdding && <AddTaskModal showModal={setIsAdding} setTasks={setTasks} />}
+            {editModalVisible && (
+                <EditModal
+                    task={editingTask.content}
+                    onClose={() => setEditModalVisible(false)}
+                    onSave={updateTask}
+                />
+            )}
+
         </>
     );
 }
