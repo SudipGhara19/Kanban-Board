@@ -6,6 +6,8 @@ import { RiErrorWarningLine, RiProgress3Line } from 'react-icons/ri';
 import { IoCheckmarkDoneCircle } from 'react-icons/io5';
 import { MdDeleteSweep, MdModeEdit } from 'react-icons/md';
 import EditModal from '../components/EditModal';
+import Column from '../components/Column';
+import Task from '../components/Task';
 
 function KanbanBoard() {
 
@@ -53,12 +55,50 @@ function KanbanBoard() {
     };
 
 
+    const handleShowDeleteModal = (task, category, index) => {
+        setDeletedVisible(true);
+        setTaskToDelete({ task, category, index });
+    }
+
+
     const handleDeleteTask = ({ task, category, index }) => {
         const updatedTasks = { ...tasks };
         updatedTasks[category].splice(index, 1);
         setTasks(updatedTasks);
         setDeletedVisible(false);
     };
+
+
+    const moveTask = (draggedItem, targetCategory) => {
+        if (draggedItem.category === targetCategory) return;
+
+        setTasks((prevTasks) => {
+            const updatedTasks = { ...prevTasks };
+
+            updatedTasks[draggedItem.category].splice(draggedItem.index, 1);
+
+            updatedTasks[targetCategory].push(draggedItem.task);
+
+            return updatedTasks;
+        });
+    };
+
+
+    const handleDrop = (item, newCategory) => {
+        setTasks((prevTasks) => {
+            const updatedTasks = { ...prevTasks };
+
+            const taskIndex = updatedTasks[item.category].findIndex((t) => t === item.content);
+            if (taskIndex > -1) {
+                updatedTasks[item.category].splice(taskIndex, 1);
+            }
+
+            updatedTasks[newCategory].push(item.content);
+
+            return updatedTasks;
+        });
+    };
+
 
 
     return (
@@ -72,90 +112,67 @@ function KanbanBoard() {
                     <div className="w-full h-full mx-10 flex justify-evenly">
 
                         {/* ---------------------------------- REQUESTED Section -------------------------------- */}
-                        <div className="w-[25%] h-[70vh] bg-slate-300 my-4 rounded-md overflow-y-auto scroll-bar">
-                            <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#4cb5ff] to-[#0248d5] relative sticky top-0 z-10">
-                                Requested
+                        <Column category="requested" tasks={tasks.requested} moveTask={moveTask} handleDrop={handleDrop}>
+                            <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#4cb5ff] to-[#0248d5] relative sticky top-0 z-10 flex justify-center items-center">
+                                <FaCodePullRequest className='text-white mr-2' size={20} />
+                                <span>Requested</span>
                                 <TbCirclePlusFilled
                                     className='absolute text-zinc-200 top-2 right-2 hover:text-zinc-50 hover:scale-110 transition-all ease-in-out duration-300'
                                     size={35}
                                     onClick={() => setIsAdding(true)} />
                             </h1>
+                            {tasks.requested.map((t, i) => (
+                                <Task
+                                    key={i}
+                                    task={t}
+                                    category="requested"
+                                    index={i}
+                                    onEditClick={() => handleEditClick("requested", i, t)}
+                                    moveTask={moveTask}
+                                    onDeleteClick={handleShowDeleteModal}
+                                />
+                            ))}
+                        </Column>
 
-                            {tasks.requested && tasks.requested.length > 0 && (
-                                tasks.requested.map((t, i) => (
-                                    <div
-                                        key={i}
-                                        className="m-3 text-zinc-800 text-sm px-2 py-4 bg-white flex justify-between items-center gap-2 rounded-md relative group hover:scale-105 transition-all ease-in-out duration-300"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <FaCodePullRequest className="text-blue-600 flex-shrink-0" size={15} />
-                                            <p className="leading-5 select-none">{t}</p>
-                                        </div>
-                                        <MdModeEdit
-                                            onClick={() => handleEditClick("requested", i, t)}
-                                            className="absolute right-2 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 transition-all duration-500 ease-in-out cursor-pointer"
-                                            size={20}
-                                        />
-                                    </div>
-                                ))
-                            )}
-                        </div>
 
 
                         {/* ---------------------------------- IN-PROGRESS Section -------------------------------- */}
-                        <div className="w-[25%] h-[70vh] bg-slate-300 my-4 rounded-md overflow-y-auto scroll-bar">
-                            <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#ede155] to-[#f39f18] relative sticky top-0 z-10">
-                                In progress
+                        <Column category="inProgress" tasks={tasks.inProgress} moveTask={moveTask} handleDrop={handleDrop}>
+                            <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#e2d256] to-[#f39f18] relative sticky top-0 z-10 flex justify-center items-center">
+                                <RiProgress3Line className='text-white mr-2' size={30} />
+                                <span>In Progress</span>
                             </h1>
-
-                            {tasks.inProgress && tasks.inProgress.length > 0 && (
-                                tasks.inProgress.map((t, i) => (
-                                    <div
-                                        key={i}
-                                        className="m-3 text-zinc-800 text-sm px-2 py-4 bg-white flex justify-between items-center gap-2 rounded-md relative group hover:scale-105 transition-all ease-in-out duration-300"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <RiProgress3Line className="text-[#f39f18] flex-shrink-0" size={20} />
-                                            <p className="leading-5 select-none">{t}</p>
-                                        </div>
-                                        <MdModeEdit
-                                            onClick={() => handleEditClick("inProgress", i, t)}
-                                            className="absolute right-2 text-gray-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 transition-all duration-500 ease-in-out cursor-pointer"
-                                            size={20}
-                                        />
-                                    </div>
-                                ))
-                            )}
-                        </div>
+                            {tasks.inProgress.map((t, i) => (
+                                <Task
+                                    key={i}
+                                    task={t}
+                                    category="inProgress"
+                                    index={i}
+                                    onEditClick={() => handleEditClick("inProgress", i, t)}
+                                    moveTask={moveTask}
+                                    onDeleteClick={handleShowDeleteModal}
+                                />
+                            ))}
+                        </Column>
 
                         {/* ---------------------------------- DONE Section -------------------------------- */}
-                        <div className="w-[25%] h-[70vh] bg-slate-300 my-4 rounded-md overflow-y-auto scroll-bar">
-                            <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#6af283] to-[#03981f] relative sticky top-0 z-10">
-                                done
+                        <Column category="done" tasks={tasks.done} moveTask={moveTask} handleDrop={handleDrop}>
+                            <h1 className="text-white uppercase text-center font-semibold py-3 bg-gradient-to-r from-[#52d86b] to-[#03981f] relative sticky top-0 z-10 flex justify-center items-center">
+                                <IoCheckmarkDoneCircle className='text-white mr-2' size={30} />
+                                <span>Done</span>
                             </h1>
-
-                            {tasks.done && tasks.done.length > 0 && (
-                                tasks.done.map((t, i) => (
-                                    <div
-                                        key={i}
-                                        className="m-3 text-zinc-800 text-sm px-2 py-4 bg-white flex justify-between items-center gap-2 rounded-md relative group hover:scale-105 transition-all ease-in-out duration-300"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <IoCheckmarkDoneCircle className="text-[#03981f] flex-shrink-0" size={20} />
-                                            <p className="leading-5 select-none">{t}</p>
-                                        </div>
-                                        <MdDeleteSweep
-                                            onClick={() => {
-                                                setTaskToDelete({ task: t, category: 'done', index: i });
-                                                setDeletedVisible(true);
-                                            }}
-                                            className="absolute right-2 text-red-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 transition-all duration-500 ease-in-out cursor-pointer"
-                                            size={20}
-                                        />
-                                    </div>
-                                ))
-                            )}
-                        </div>
+                            {tasks.done.map((t, i) => (
+                                <Task
+                                    key={i}
+                                    task={t}
+                                    category="done"
+                                    index={i}
+                                    onEditClick={() => handleEditClick("done", i, t)}
+                                    moveTask={moveTask}
+                                    onDeleteClick={handleShowDeleteModal}
+                                />
+                            ))}
+                        </Column>
                     </div>
                 </div>
             </div>
