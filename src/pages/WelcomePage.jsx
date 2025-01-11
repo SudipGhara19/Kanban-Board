@@ -30,7 +30,7 @@ function WelcomePage() {
                 {
                     opacity: 1,
                     y: 0,
-                    duration: 0.4, // Duration of each animation
+                    duration: 0.7, // Duration of each animation
                     ease: "power3.out",
                     onComplete: () => {
                         // Remove the animation on scroll for this section
@@ -62,7 +62,7 @@ function WelcomePage() {
                     {links.map((l, i) =>
                         <div className='flex items-center gap-3'>
                             <span style={{ boxShadow: "0 0 0.75em #17b4f1" }} className='h-[6px] w-[6px] rounded-full bg-[#17b4f1]'></span>
-                            <Link className='text-zinc-300 hover:text-zinc-50' to={l.url}>
+                            <Link className='text-zinc-400 hover:text-zinc-50' to={l.url}>
                                 {l.name}
                             </Link>
                         </div>
@@ -71,13 +71,13 @@ function WelcomePage() {
             </div>
 
             {/* Description */}
-            <div className='gsap-ani w-[70%] flex flex-col items-center p-4 mx-auto justify-center border-[1px] border-zinc-400 rounded-lg'>    <div className='flex flex-col items-center p-4 gsap-ani'>
+            <div className='gsap-ani w-[70%] flex flex-col items-center p-4 mx-auto justify-center border-[1px] border-zinc-400 rounded-lg'>    <div className='flex flex-col items-center p-4'>
                 <h1 className='text-5xl '>Welcome</h1>
                 <h2 className='text-2xl '>To</h2>
                 <h3 className='text-3xl '><span className='text-sky-500'>Kanban-Board</span> Project for</h3>
             </div>
-                <img className='w-[20%] py-7 gsap-ani ' src="/logo-3.png" alt="co-logo" />
-                <div className='w-[50%] flex justify-center gap-5 gsap-ani'>
+                <img className='w-[20%] py-7 ' src="/logo-3.png" alt="co-logo" />
+                <div className='w-[50%] flex justify-center gap-5'>
                     <Link className='bg-sky-600 px-5 py-2 my-4 font-semibold text-zinc-200 hover:text-zinc-50 hover:bg-sky-800 hover:scale-105 transition-all ease-in-out duration-300 rounded' to='/kanban-board' >
                         View Project
                     </Link>

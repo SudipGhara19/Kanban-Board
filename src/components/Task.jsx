@@ -9,7 +9,7 @@ function Task({ task, category, index, moveTask, onEditClick, onDeleteClick }) {
 
     const [{ isDragging }, drag] = useDrag({
         type: "TASK",
-        item: { content: task, category: category }, // Replace "requested" with the actual category
+        item: { content: task, category: category },
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),

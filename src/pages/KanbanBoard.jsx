@@ -4,17 +4,17 @@ import AddTaskModal from '../components/AddTaskModal';
 import { FaCodePullRequest } from 'react-icons/fa6';
 import { RiErrorWarningLine, RiProgress3Line } from 'react-icons/ri';
 import { IoCheckmarkDoneCircle } from 'react-icons/io5';
-import { MdDeleteSweep, MdModeEdit } from 'react-icons/md';
 import EditModal from '../components/EditModal';
 import Column from '../components/Column';
 import Task from '../components/Task';
+import gsap from 'gsap';
 
 function KanbanBoard() {
 
     const [tasks, setTasks] = useState({
-        requested: ["heelooo", "my name is sudip"],
-        inProgress: ["hello"],
-        done: ["hello"],
+        requested: [],
+        inProgress: [],
+        done: [],
     });
     const [isAdding, setIsAdding] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
@@ -109,7 +109,7 @@ function KanbanBoard() {
                         Kanban Board
                     </h1>
 
-                    <div className="w-full h-full mx-10 flex justify-evenly">
+                    <div className="w-full h-full mx-10 flex justify-evenly kanban-container">
 
                         {/* ---------------------------------- REQUESTED Section -------------------------------- */}
                         <Column category="requested" tasks={tasks.requested} moveTask={moveTask} handleDrop={handleDrop}>
